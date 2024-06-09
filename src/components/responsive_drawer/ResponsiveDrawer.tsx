@@ -145,7 +145,7 @@ export default function ResponsiveDrawer(props: Props) {
     <div>
       <Toolbar sx={useStyles.toolbarDrawer}>
         <img
-          src="src/images/logo-slc.svg"
+          src="/logo-slc.svg"
           alt="SLC Logo"
           style={useStyles.logo}
         />

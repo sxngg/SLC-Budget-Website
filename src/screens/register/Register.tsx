@@ -79,7 +79,7 @@ const RegisterForm = () => {
       <Grid container component="main" sx={useStyles.bodyContainer}>
         <Grid item xs={12} sm={6} md={7} sx={useStyles.leftContent}>
           <img
-            src="src/images/logo-slc.svg"
+            src="/logo-slc.svg"
             alt="SLC Logo"
             style={useStyles.logo}
           />
