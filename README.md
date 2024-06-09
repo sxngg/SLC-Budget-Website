@@ -34,6 +34,12 @@ We consume an API designed by us, u show it here [API].
 - ESLint
 - TypeScript
 
+## Try app
+If you want try app you can add us as friends in your contacts and invite us to your event
+- sxngg@gmail.com
+- gomezcamilo9701@gmail.com
+- closorio@gmail.com
+
 ## Getting Started Local
 > [!NOTE]
 > Local version is v0.1.0 tag
