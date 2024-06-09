@@ -21,10 +21,7 @@ export const contactsSlice = createSlice({
 			return state.filter((user) => user.id !== id);
 		},
 		rollbackContact: (state, action: PayloadAction<IUserWithId>) => {
-			const isUserAlreadyDefined = state.some(user => user.id === action.payload.id)
-			if (!isUserAlreadyDefined) {
-				state.push(action.payload)
-			}
+			return state = state.filter(contact => contact.id !== action.payload.id);
 		},
     updateContacts: (_state, action: PayloadAction<IUserWithId[]>) => {
       return action.payload;

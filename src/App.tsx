@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Contacts, EventDetails, EventForm, Login, Profile, Register, ResponsiveDrawer } from './components';
+import { Contacts, EventDetails, EventForm, Home, Login, MyEvents, Notifications, Profile, Register, ResponsiveDrawer } from './screens';
 import ProtectedRoute from './utils/ProtectedRoute';
 
 const App = () => {
@@ -11,10 +11,13 @@ const App = () => {
 
           <Route element={<ProtectedRoute redirectPath='/login'/>}>
             <Route path="/" element={<ResponsiveDrawer />}>
+              <Route path='/home' element={<Home />} />
               <Route path='/contacts' element={<Contacts />} />
               <Route path='/profile' element={<Profile />} />
-              <Route path='/event' element={<EventForm />} />
-              <Route path='/event-details' element={<EventDetails />} />
+              <Route path='/notifications' element={<Notifications />} />
+              <Route path='/my-events' element={<MyEvents />} />
+              <Route path='/create-event' element={<EventForm />} />
+              <Route path="/event-details/:isOwner" element={<EventDetails />} />
             </Route>
           </Route>
 

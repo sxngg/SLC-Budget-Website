@@ -5,6 +5,16 @@ export type TLoginUser = {
 };
 
 //USER
+
+export interface IUserResponse {
+  id: string;
+  name: string;
+  email: string;
+  lastName: string;
+  username: string;
+  profileImage: string;
+  balance: number;
+}
 export interface IUser {
   email: string;
   name: string;
@@ -34,7 +44,6 @@ export type TEditUser = {
 
 //Componente Contacts
 export type TContactState = {
-  loading: boolean;
   email: string;
   contactInfo: IUserWithId | null;
   modalOpen: boolean;
@@ -54,11 +63,18 @@ export interface IEvent {
   description: string;
   type: string;
   owner_id: string;
-};
+}
 
 export interface IEventWithId extends IEvent {
   event_id: string;
   picture: string;
+}
+
+export interface IParticipantEvents extends IEventWithId {
+  ownerProfileImage: string | null;
+  ownerName: string;
+  ownerEmail: string;
+  ownerUsername: string;
 }
 
 export type TEventForEdit = {
@@ -76,27 +92,101 @@ export type TEventDataEdit = {
 // Invitation
 
 export type TInvitationCreate = {
-  eventId: string,
-  contactId: string,
+  eventId: string;
+  contactId: string;
+};
+
+export type TInvitationContactInfoResponse = {
+  contactName: string;
+  contactLastName: string;
+  contactUsername: string;
+  contactId: number;
+  contactEmail: string;
+  contactProfileImage: string | null;
+  invitation_id: number;
+  invitation_state: string;
+};
+
+export interface TInvitationEventInfoResponse {
+  eventPicture: string | null;
+  eventName: string;
+  eventDescription: string;
+  eventOwnerProfileImage: string | null;
+  eventOwnerId: string;
+  eventOwnerName: string;
+  eventOwnerEmail: string;
+  invitation_id: number;
+  eventType: string;
+  event_id: number;
+  invitation_state: string;
+  viewed: boolean;
 }
 
-export type TInvitationData = {
-  invitation_id: string,
-  event: IEventWithId,
-  contact: IUserWithId,
-  invitation_state: string;
+// Event contacts
+export type TEventContactsResponse = {
+  contactEmail: string;
+  contactName: string;
+  contactId: number;
+  contactProfileImage: string | null;
+  event_contact_id: number;
+  contactLastName: string;
+  contactUsername: string;
+  balance: number;
+};
+
+// Activities
+export type TParticipationData = {
+  [key: string]: {
+    participationPercentage: number;
+    staticValue: number;
+  };
+};
+
+export type TActivityCreate = {
+  description: string;
+  eventId: string;
+  value: number;
+  participationData: TParticipationData | null;
+};
+
+export type TActivityResponse = {
+  id: number;
+  description: string;
+  value: number;
+  isPaid: boolean;
+};
+
+// Payments
+export interface TPaymentRequest {
+  activityId: number;
+  payerId: number;
+  eventId: number;
+  amount: number;
+}
+
+// Debts
+export interface TDebtsResponse {
+  userDebtorId:      number;
+  userDebtorName:      string;
+  userDebtorEmail:     string;
+  userCreditorId:      number;
+  userCreditorName:    string;
+  userCreditorEmail:   string;
+  userCreditorPicture: null;
+  amount:              number;
+  userDebtorPicture:   null;
+  isPaid:              boolean;
+}
+
+export interface TPayDebtRequest {
+  creditorId: number;
+  debtorId:   number;
+  amount:     number;
 }
 
 // Pagination
 export type EventPaginationResponse = {
-  content: {
-    event_id: number;
-    name: string;
-    description: string;
-    type: string;
-    picture: string;
-    owner: IUserWithId;
-  }[];
+  content: IEventWithId[];
   pageable: {
     pageNumber: number;
     pageSize: number;
@@ -123,9 +213,8 @@ export type EventPaginationResponse = {
   first: boolean;
   empty: boolean;
 };
-
-export type ContactPaginationResponse = {
-  content: IUserWithId[] | null;
+export interface PaginationResponse<T> {
+  content: T[] | null;
   pageable: {
     pageNumber: number;
     pageSize: number;
@@ -151,13 +240,19 @@ export type ContactPaginationResponse = {
   numberOfElements: number;
   first: boolean;
   empty: boolean;
-};
+}
 
-// //Edit Event
-// export type TEventForEdit = {
-//   name: string;
-//   description: string;
-//   type: string;
-//   owner_id: number;
-//   imagen_url: File | null;
-// }
+export type ContactPaginationResponse = PaginationResponse<IUserWithId>;
+export type EventsPaginationResponse = PaginationResponse<IEventWithId>;
+export type ParticipantEventsPaginationResponse =
+  PaginationResponse<IParticipantEvents>;
+export type InvitationsPaginationResponse =
+  PaginationResponse<TInvitationContactInfoResponse>;
+export type InvitationsEventPaginationResponse =
+  PaginationResponse<TInvitationEventInfoResponse>;
+export type EventContactsPaginationResponse =
+  PaginationResponse<TEventContactsResponse>;
+export type ActivitiesPaginationResponse =
+  PaginationResponse<TActivityResponse>;
+export type DebtsPaginationResponse =
+  PaginationResponse<TDebtsResponse>;

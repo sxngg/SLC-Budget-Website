@@ -1,5 +1,6 @@
 import CONSTANTS from "../../constants";
-import { EventPaginationResponse, IEvent, TEventDataEdit } from "../../types";
+import { IEvent, ParticipantEventsPaginationResponse, TEventDataEdit } from "../../types";
+import { fetchPage } from "../UtilService";
 import { TokenService } from "../token/TokenService";
 
 export const createEvent = async (eventData: IEvent, picture: File | null) => {
@@ -112,30 +113,42 @@ export const getEventsByUserId = async (userId: string) => {
   }
 
   try {
-    const url = `${CONSTANTS.BASE_URL}${CONSTANTS.GET_EVENT_BY_USER_ID}/${userId}`;
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    };
+    let url = `${CONSTANTS.BASE_URL}${CONSTANTS.GET_EVENT_BY_USER_ID}/${userId}?page=${0}`;
+    const initialResponse = await fetchPage(url, token);
+    const totalPages = initialResponse?.totalPages || 1;
 
-    const requestOptions = {
-      method: "GET",
-      headers: headers,
-    };
-
-    const response = await fetch(url, requestOptions);
-
-    if (!response.ok) {
-      throw new Error(`Get all events request failed: ${response.status} ${response.text}`);
+    const pagePromises = [];
+    for (let page = 1; page < totalPages; page++) {
+      url = `${CONSTANTS.BASE_URL}${CONSTANTS.GET_EVENT_BY_USER_ID}/${userId}?page=${page}`;
+      pagePromises.push(fetchPage(url, token));
     }
 
-    const responseData: EventPaginationResponse  = await response.json();
-    const events = responseData.content;
-    const pageInfo = responseData.pageable;
-
-    return { events, pageInfo };
+    const responses = await Promise.all(pagePromises);
+    const allEvents: ParticipantEventsPaginationResponse = responses.reduce(
+      (accumulator, currentResponse) => {
+        if (accumulator.content && currentResponse.content) {
+          accumulator.content = accumulator.content.concat(currentResponse.content);
+        }
+        accumulator.totalElements = currentResponse.totalElements || 0;
+        return accumulator;
+      },
+      {
+        content: initialResponse?.content || [],
+        pageable: initialResponse?.pageable || {},
+        totalPages: totalPages,
+        totalElements: initialResponse?.totalElements || 0,
+        last: false,
+        size: 0,
+        number: 0,
+        sort: initialResponse?.sort || {},
+        numberOfElements: 0,
+        first: false,
+        empty: false,
+      }
+    );
+    return allEvents;
   } catch (error) {
-    console.error("Get all events request error:", error);
+    console.error("Get event contacts request error:", error);
     throw error;
   }
 }; 

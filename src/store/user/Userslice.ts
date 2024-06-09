@@ -1,19 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IUserWithId } from "../../types";
+import { IUserResponse } from "../../types";
 
-export const DEFAULT_USER_STATE = {
+export const DEFAULT_USER_STATE: IUserResponse = {
   id: "",
-  email: "",
   name: "",
+  email: "",
   lastName: "",
-  password: "",
   username: "",
-  roles: []
+  profileImage: "",
+  balance: 0,
 }
 
-const initialState: IUserWithId = (() => {
-	const persistedState = localStorage.getItem("__redux__user__");
-	return persistedState ? JSON.parse(persistedState).user : DEFAULT_USER_STATE;
+const initialState: IUserResponse = (() => {
+	const persistedState = localStorage.getItem("__user__");
+	return persistedState ? JSON.parse(persistedState) : DEFAULT_USER_STATE;
 })();
 
 export const userSlice = createSlice({

@@ -7,12 +7,12 @@ export const eventLocalStorageMiddleware: Middleware = store => next => action =
 }
 
 
-const UserMiddleware: Middleware = store => next => action => {
+const eventBdMiddleware: Middleware = store => next => action => {
 	const { type, payload } = action
 	next(action)
 	if (type === 'event/editEvent') {
-		console.log('a', payload, store);
+		console.log('eventMiddelware', payload, store);
 	}
 }
 
-export default UserMiddleware;
+export default eventBdMiddleware;

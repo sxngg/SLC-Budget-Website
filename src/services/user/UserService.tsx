@@ -1,27 +1,30 @@
 import CONSTANTS from "../../constants";
-import { TLoginUser, IUser, TEditUser, ContactPaginationResponse } from "../../types";
+import { TLoginUser, IUser, TEditUser, ContactPaginationResponse, EventsPaginationResponse } from "../../types";
+import { fetchPage } from "../UtilService";
 import { TokenService } from "../token/TokenService";
 
-export const registerUser = async (user: IUser, profileImage: File) => {
-    try {
-        const formData = new FormData();
-        formData.append('createUserDTO', new Blob([JSON.stringify(user)], { type: 'application/json' }));
-        formData.append('profileImage', profileImage);
+export const registerUser = async (user: IUser, profileImage: File | null) => {
+  const formData = new FormData();
+  formData.append('createUserDTO', new Blob([JSON.stringify(user)], { type: 'application/json' }));
+  if (profileImage) {
+    formData.append('profileImage', profileImage);
+  }
+  try {
+      
+      const repoonse = await fetch(`${CONSTANTS.BASE_URL}${CONSTANTS.USER_REGISTER}`, {
+          method: 'POST',
+          body: formData,
+      });
 
-        const repoonse = await fetch(`${CONSTANTS.BASE_URL}${CONSTANTS.USER_REGISTER}`, {
-            method: 'POST',
-            body: formData,
-        });
-
-        if (!repoonse.ok) {
-            throw new Error('POST request failed');
-        }
-        const data = await repoonse.json();
-        return data;
-    } catch (err) {
-        console.error('POST request errror',err);
-        throw err;
-    }
+      if (!repoonse.ok) {
+          throw new Error('POST request failed');
+      }
+      const data = await repoonse.json();
+      return data;
+  } catch (err) {
+      console.error('POST request errror',err);
+      throw err;
+  }
 };
 
 export const loginUser = async (loginData: TLoginUser) => {
@@ -144,8 +147,8 @@ export const getProfilePicture = async (pictureName: string) => {
     const blobData = await response.blob(); // Receive the image as a Blob
 
     if (blobData instanceof Blob) {
-      const imageUrl = URL.createObjectURL(blobData); // Convert Blob to a URL
-      return imageUrl;
+      const picture = URL.createObjectURL(blobData); // Convert Blob to a URL
+      return picture;
     } else {
       console.error("Invalid response format");
       return null;
@@ -163,7 +166,6 @@ export const addContact = async (contactId: string, userId: string) => {
     console.error("No se encontró un token de autenticación");
     return null;
   }
-
   try {
     const res = await fetch(`${CONSTANTS.BASE_URL}${CONSTANTS.ADD_CONTACT}/${userId}`, {
       method: 'POST',
@@ -188,7 +190,6 @@ export const getContactsByUserId = async (userId: string) => {
     console.error("No se encontró un token de autenticación");
     return null;
   }
-
   try {
     const url = `${CONSTANTS.BASE_URL}${CONSTANTS.GET_CONTACTS}/${userId}`;
     const headers = {
@@ -213,6 +214,53 @@ export const getContactsByUserId = async (userId: string) => {
     return {contacts, pageInfo};
   } catch (error) {
     console.error("GET request error:", error);
+    throw error;
+  }
+};
+
+export const getEventsByOwner = async (ownerId: string) => {
+  const token = TokenService.getToken();
+  if (!token) {
+    console.error("No se encontró un token de autenticación");
+    return null;
+  }
+  try {
+    let url = `${CONSTANTS.BASE_URL}${CONSTANTS.GET_EVENTS_BY_OWNER}/${ownerId}?page=${0}`;
+    const initialResponse = await fetchPage(url, token);
+    const totalPages = initialResponse?.totalPages || 1;
+
+    const pagePromises = [];
+    for (let page = 1; page < totalPages; page++) {
+      url = `${CONSTANTS.BASE_URL}${CONSTANTS.GET_EVENTS_BY_OWNER}/${ownerId}?page=${page}`;
+      pagePromises.push(fetchPage(url, token));
+    }
+
+    const responses = await Promise.all(pagePromises);
+    const allEvents: EventsPaginationResponse = responses.reduce(
+      (accumulator, currentResponse) => {
+        if (accumulator.content && currentResponse.content) {
+          accumulator.content = accumulator.content.concat(currentResponse.content);
+        }
+        accumulator.totalElements = currentResponse.totalElements || 0;
+        return accumulator;
+      },
+      {
+        content: initialResponse?.content || [],
+        pageable: initialResponse?.pageable || {},
+        totalPages: totalPages,
+        totalElements: initialResponse?.totalElements || 0,
+        last: false,
+        size: 0,
+        number: 0,
+        sort: initialResponse?.sort || {},
+        numberOfElements: 0,
+        first: false,
+        empty: false,
+      }
+    );
+    return allEvents;
+  } catch (error) {
+    console.error("Get event contacts request error:", error);
     throw error;
   }
 };
