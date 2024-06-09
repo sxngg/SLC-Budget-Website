@@ -1,5 +1,5 @@
 const CONSTANTS = {
-  BASE_URL: 'http://localhost:8080',
+  BASE_URL: 'https://slc-budget-api.onrender.com',
   USER_REGISTER: '/user/signup',
   USER_LOGIN: '/login',
   PROFILE_PICTURE: '/media',
