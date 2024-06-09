@@ -17,6 +17,7 @@ import { loginUser } from "../../services/user/UserService";
 import { TLoginUser } from "../../types";
 import "../login/Login.css";
 import { useAuthActions } from "../../store/auth/useAuthActions";
+import logo from '../../../public/logo-slc.svg';
 
 const defaultValues: TLoginUser = {
   email: "",
@@ -74,7 +75,17 @@ const LoginForm = () => {
       <Grid container component="main" sx={useStyles.bodyContainer}>
         <Grid item xs={12} sm={6} md={7} sx={useStyles.leftContent}>
           <img
-            src="src/images/logo-slc.svg"
+            src="/logo-slc.svg"
+            alt="SLC Logo"
+            style={useStyles.logo}
+          />
+           <img
+            src="SLC-Budget-Website\public\logo-slc.svg"
+            alt="SLC Logo"
+            style={useStyles.logo}
+          />
+           <img
+            src={logo}
             alt="SLC Logo"
             style={useStyles.logo}
           />
