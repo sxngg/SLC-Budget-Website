@@ -1,3 +1,9 @@
+.bodyH3 {
+    color: white;
+    padding: "5px";
+    text-align: "center";
+    margin-top: "8px";
+}
 
 /*vista mobile*/
 @media only screen and (min-width:0px) and (max-width:767px){
