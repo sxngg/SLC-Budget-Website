@@ -2,7 +2,7 @@ import HashLoader from 'react-spinners/HashLoader'
 import './Loader.css'
 import { useAppSelector } from '../../hooks/store';
 import { useEffect, useState } from 'react';
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 
 const LoadingScreen = () => {
     const isLoading = useAppSelector((state) => state.loading);

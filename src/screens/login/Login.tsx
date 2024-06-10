@@ -18,7 +18,7 @@ import { TLoginUser } from "../../types";
 import "../login/Login.css";
 import { useAuthActions } from "../../store/auth/useAuthActions";
 import LoadingScreen from "../../components/loading_screen/LoadingScreen";
-import { useAppDispatch, useAppSelector } from "../../hooks/store";
+import { useAppSelector } from "../../hooks/store";
 import { startLoading, stopLoading } from "../../store/loading/loadingSlice";
 import { useDispatch } from "react-redux";
 
